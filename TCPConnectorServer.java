@@ -112,12 +112,12 @@ public class TCPConnectorServer {
             }
             Socket client = new Socket(this.clients.get(id), CALL_PORT);
             System.out.println("Asking client");
-            boolean answer = utils.askClient(client, passwordBytes);
+            boolean answer = askClient(client, passwordBytes);
             System.out.println("Answer: " + answer);
             if (answer) {
                 int port = generatePort();
                 System.out.println(port);
-                utils.connect(socket, client, ports[0], ports[1]);
+                connect(socket, client, ports[0], ports[1]);
             } else {
                 output.write(new byte[5], 0, 5);
                 output.write(new byte[5], 0, 5);
@@ -163,7 +163,7 @@ public class TCPConnectorServer {
                 output.write(answer, 0, 1);
                 if (Arrays.equals(answer, YES)) {
                     System.out.println("Has call");
-                    new utils.HandleConnection(caller, client, this.generatePorts()).start();
+                    new HandleConnection(caller, client, this.generatePorts()).start();
                 }
             } else {
                 output.write(NO, 0, 1);
@@ -217,8 +217,8 @@ public class TCPConnectorServer {
             System.out.println("Entered handle connection...");
             try {
                 //turn the ports to byte arrays
-                byte[] tcpPort = utils.zFill(("" + this.ports[0]).getBytes(StandardCharsets.US_ASCII), 5);
-                byte[] udpPort = utils.zFill(("" + this.ports[1]).getBytes(StandardCharsets.US_ASCII), 5);
+                byte[] tcpPort = zFill(("" + this.ports[0]).getBytes(StandardCharsets.US_ASCII), 5);
+                byte[] udpPort = zFill(("" + this.ports[1]).getBytes(StandardCharsets.US_ASCII), 5);
 
                 //instantiate input and output streams
                 DataInputStream controlledInput, controllerInput;
@@ -265,13 +265,13 @@ public class TCPConnectorServer {
 
                     //send controlled the address of the controller
                     controlledOutput.write(controllerUDP.getAddress().getAddress());
-                    byte[] controllerPort = utils.zFill(("" + controllerUDP.getPort()).getBytes(StandardCharsets.US_ASCII), 5);
+                    byte[] controllerPort = zFill(("" + controllerUDP.getPort()).getBytes(StandardCharsets.US_ASCII), 5);
                     controlledOutput.write(controllerPort, 0, 5);
                     System.out.println("sent controlled the address");
 
                     //send controller the address of the controlled
                     controllerOutput.write(controlledUDP.getAddress().getAddress());
-                    byte[] controlledPort = utils.zFill(("" + controlledUDP.getPort()).getBytes(StandardCharsets.US_ASCII), 5);
+                    byte[] controlledPort = zFill(("" + controlledUDP.getPort()).getBytes(StandardCharsets.US_ASCII), 5);
                     controllerOutput.write(controlledPort, 0, 5);
                     System.out.println("sent controller the address");
 
