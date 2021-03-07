@@ -79,7 +79,7 @@ public class TCPConnectorServer {
         int chr;
         while (true) {
             id = new StringBuilder();
-            for (int i = 0; i < this.idLength;) {
+            for (int i = 0; i < this.idLength; ) {
                 chr = (int) (Math.random() * (rightLimit - leftLimit + 1)) + leftLimit;
                 if (chr <= 57 || (chr >= 65 && chr < 91) || chr > 96) {
                     id.append((char) chr);
@@ -184,12 +184,11 @@ public class TCPConnectorServer {
         }
         this.calls.put(id, client);
     }
-    
+
     /*
     function that gets an array and returns a new one 0 padded to len
      */
-    static byte[] zFill(byte[] buffer, int len)
-    {
+    static byte[] zFill(byte[] buffer, int len) {
         if (buffer.length == len) return buffer;
         byte[] filled = new byte[len];
         for (int i = 0; i < len; i++)
@@ -218,8 +217,8 @@ public class TCPConnectorServer {
             System.out.println("Entered handle connection...");
             try {
                 //turn the ports to byte arrays
-                byte[] tcpPort = utils.zFill(("" +  this.ports[0]).getBytes(StandardCharsets.US_ASCII), 5);
-                byte[] udpPort = utils.zFill(("" +  this.ports[1]).getBytes(StandardCharsets.US_ASCII), 5);
+                byte[] tcpPort = utils.zFill(("" + this.ports[0]).getBytes(StandardCharsets.US_ASCII), 5);
+                byte[] udpPort = utils.zFill(("" + this.ports[1]).getBytes(StandardCharsets.US_ASCII), 5);
 
                 //instantiate input and output streams
                 DataInputStream controlledInput, controllerInput;
@@ -346,8 +345,8 @@ public class TCPConnectorServer {
                 System.out.println("connected controller commands");
 
                 //send starting byte and start commands thread
-                new DataOutputStream(controlledTCP.getOutputStream()).write(new byte[] { 1 }, 0, 1);
-                new DataOutputStream(controllerTCP.getOutputStream()).write(new byte[] { 1 }, 0, 1);
+                new DataOutputStream(controlledTCP.getOutputStream()).write(new byte[]{1}, 0, 1);
+                new DataOutputStream(controllerTCP.getOutputStream()).write(new byte[]{1}, 0, 1);
                 new HandleCommands(controllerTCP, controlledTCP).start();
             } catch (Exception e) {
                 System.out.println(e.toString());
@@ -372,8 +371,8 @@ public class TCPConnectorServer {
             try {
                 input = new DataInputStream(this.controlled.getInputStream());
                 output = new DataOutputStream(this.controller.getOutputStream());
-                output.write(new byte[] { 0 });
-                new DataOutputStream(this.controlled.getOutputStream()).write(new byte[] { 0 });
+                output.write(new byte[]{0});
+                new DataOutputStream(this.controlled.getOutputStream()).write(new byte[]{0});
             } catch (Exception e) {
                 System.out.println("Error at handle stream connection: " + e.toString());
                 return;
@@ -382,7 +381,7 @@ public class TCPConnectorServer {
                 while (true) {
                     int index = 0, count = 1024;
                     input.readFully(length, 0, 10);
-                    output.write(length, 0,10);
+                    output.write(length, 0, 10);
                     System.out.println(new String(length, StandardCharsets.US_ASCII));
                     int len = Integer.parseInt(new String(length, StandardCharsets.US_ASCII));
                     System.out.println("length: " + len);
@@ -433,36 +432,37 @@ public class TCPConnectorServer {
                 System.out.println("Error at handle commands: " + e.toString());
             }
         }
-    
-    /*
-     main function that receives clients and follows requests
-     */
-    public static void main(String... args) {
-        Socket client;
-        DataInputStream input;
-        DataOutputStream output;
-        byte[] request = new byte[5];
-        TCPConnectorServer server = new TCPConnectorServer(10);
-        while (true) {
-            try {
-                client = server.socket.accept();
-                System.out.println("Received client");
-                input = new DataInputStream(client.getInputStream());
-                input.readFully(request, 0, 5);
-                if (Arrays.equals(request, CALL_BYTES)) {
-                    System.out.println("Registering call...");
-                    server.registerCall(client);
-                    System.out.println("Registered.");
-                } else if (Arrays.equals(request, ALERT_ONLINE_BYTES)) {
-                    output = new DataOutputStream(client.getOutputStream());
-                    output.write(server.generateId(client.getInetAddress().getHostAddress()));
-                    System.out.println(server.clients);
-                } else if (Arrays.equals(request, CHECK_CALL_BYTES)) {
-                    System.out.println("Checking calls...");
-                    server.checkCall(client);
+
+        /*
+         main function that receives clients and follows requests
+         */
+        public static void main(String... args) {
+            Socket client;
+            DataInputStream input;
+            DataOutputStream output;
+            byte[] request = new byte[5];
+            TCPConnectorServer server = new TCPConnectorServer(10);
+            while (true) {
+                try {
+                    client = server.socket.accept();
+                    System.out.println("Received client");
+                    input = new DataInputStream(client.getInputStream());
+                    input.readFully(request, 0, 5);
+                    if (Arrays.equals(request, CALL_BYTES)) {
+                        System.out.println("Registering call...");
+                        server.registerCall(client);
+                        System.out.println("Registered.");
+                    } else if (Arrays.equals(request, ALERT_ONLINE_BYTES)) {
+                        output = new DataOutputStream(client.getOutputStream());
+                        output.write(server.generateId(client.getInetAddress().getHostAddress()));
+                        System.out.println(server.clients);
+                    } else if (Arrays.equals(request, CHECK_CALL_BYTES)) {
+                        System.out.println("Checking calls...");
+                        server.checkCall(client);
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error at main loop: " + e.toString());
                 }
-            } catch (Exception e) {
-                System.out.println("Error at main loop: " + e.toString());
             }
         }
     }
