@@ -371,6 +371,7 @@ public class TCPConnectorServer {
             try {
                 input = new DataInputStream(this.controlled.getInputStream());
                 output = new DataOutputStream(this.controller.getOutputStream());
+                new DataInputStream(this.controller.getInputStream()).readFully(new byte[1], 0, 1);
                 output.write(new byte[]{0});
                 new DataOutputStream(this.controlled.getOutputStream()).write(new byte[]{0});
             } catch (Exception e) {
@@ -379,7 +380,7 @@ public class TCPConnectorServer {
             }
             try {
                 while (true) {
-                    int index = 0, count = 1024;
+                    int index = 0, count = 10240;
                     input.readFully(length, 0, 10);
                     output.write(length, 0, 10);
                     System.out.println(new String(length, StandardCharsets.US_ASCII));
