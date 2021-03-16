@@ -433,7 +433,7 @@ public class TCPConnectorServer {
                 System.out.println("Error at handle commands: " + e.toString());
             }
         }
-
+    }
         /*
          main function that receives clients and follows requests
          */
@@ -467,4 +467,3 @@ public class TCPConnectorServer {
             }
         }
     }
-}
