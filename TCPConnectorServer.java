@@ -274,7 +274,11 @@ public class TCPConnectorServer {
                     byte[] controlledPort = zFill(("" + controlledUDP.getPort()).getBytes(StandardCharsets.US_ASCII), 5);
                     controllerOutput.write(controlledPort, 0, 5);
                     System.out.println("sent controller the address");
-
+    
+                    controllerInput.readFully(new byte[1], 0, 1);
+                    controlledOutput.write(new byte[] { 1 }, 0, 1);
+                    controllerOutput.write(new byte[] { 1 }, 0, 1);
+                    
                     //receive status byte from both clients
                     byte[] controllerStatus = new byte[1];
                     byte[] controlledStatus = new byte[1];
