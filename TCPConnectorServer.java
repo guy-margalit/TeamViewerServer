@@ -375,9 +375,11 @@ public class TCPConnectorServer {
             try {
                 input = new DataInputStream(this.controlled.getInputStream());
                 output = new DataOutputStream(this.controller.getOutputStream());
-                controllerInput = new DataInputStream(this.controller.getInputStream()).readFully(new byte[1], 0, 1);
+                controllerInput = new DataInputStream(this.controller.getInputStream());
+                controllerInput.readFully(new byte[1], 0, 1);
                 output.write(new byte[]{0});
-                controlledOutput = new DataOutputStream(this.controlled.getOutputStream()).write(new byte[]{0});
+                controlledOutput = new DataOutputStream(this.controlled.getOutputStream());
+                controlledOutput.write(new byte[]{0});
             } catch (Exception e) {
                 System.out.println("Error at handle stream connection: " + e.toString());
                 return;
@@ -400,8 +402,8 @@ public class TCPConnectorServer {
                         System.out.println("index: " + index);
                     }
                     byte[] end = new byte[1];
-                    controlledInput.readFully(end, 0, 1);
-                    controllerOutput.write(end, 0, 1);
+                    controllerInput.readFully(end, 0, 1);
+                    controlledOutput.write(end, 0, 1);
                 }
             } catch (Exception e) {
                 System.out.println("Error at handle stream: " + e.toString());
