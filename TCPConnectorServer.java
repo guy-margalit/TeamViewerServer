@@ -401,12 +401,13 @@ public class TCPConnectorServer {
                         index += count;
                         System.out.println("index: " + index);
                     }
-                    byte[] end = new byte[1];
-                    controllerInput.readFully(end, 0, 1);
-                    controlledOutput.write(end, 0, 1);
                 }
             } catch (Exception e) {
                 System.out.println("Error at handle stream: " + e.toString());
+                if (!this.controlled.isClosed())
+                    this.controlled.close();
+                if (!this.controller.isClosed())
+                    this.controller.close();
             }
         }
     }
