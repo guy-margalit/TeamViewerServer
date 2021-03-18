@@ -404,10 +404,14 @@ public class TCPConnectorServer {
                 }
             } catch (Exception e) {
                 System.out.println("Error at handle stream: " + e.toString());
-                if (!this.controlled.isClosed())
-                    this.controlled.close();
-                if (!this.controller.isClosed())
-                    this.controller.close();
+                try {
+                    if (!this.controlled.isClosed())
+                        this.controlled.close();
+                    if (!this.controller.isClosed())
+                        this.controller.close();
+                } catch (IOException err) {
+                    System.out.println("Error closing sockets");
+                }
             }
         }
     }
